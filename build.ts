@@ -11,13 +11,13 @@ function recreateBuildDirectory() {
             fs.rmdirSync('build/', { recursive: true }, function(rmdirError: any) {
                 if (!rmdirError) {
                     console.log("Build directory removed")
-                    fs.mkDirSync('build/')
+                    fs.mkdirSync('build/')
                 } else {
                     console.log(rmdirError)
                 }
             })
         } else {
-            fs.mkDirSync('build/')
+            fs.mkdirSync('build/')
         }
     })
 }
