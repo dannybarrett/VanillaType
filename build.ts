@@ -17,7 +17,7 @@ function recreateBuildDirectory() {
                 }
             })
         } else {
-            fs.mkDir('build/')
+            fs.mkDirSync('build/')
         }
     })
 }
