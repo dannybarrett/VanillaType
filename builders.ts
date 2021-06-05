@@ -34,8 +34,8 @@ function minifyFile(srcFile: string, srcFolder: string, destFolder: string) {
                     }
                 }
             )
-            // data = uglify.minify(transpiledCode.outputText).code
-            data = transpiledCode.outputText
+            data = uglify.minify(transpiledCode.outputText).code
+            // data = transpiledCode.outputText
             destFile = srcFile.replace('.ts', '.js')
         }
 

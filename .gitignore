@@ -2,3 +2,4 @@ node_modules/
 node_modules/*
 build/
 build/*
+public/scripts/lib/vanillatype.ts

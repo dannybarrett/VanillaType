@@ -1,7 +1,5 @@
 const elements: HTMLCollection = document.body.children
-let vanillaLink: any
-import {registerLink} from './vanillalink.js'
-
+ 
 function lookForCustomElements(parent: HTMLCollection) {
     for (let i = 0; i < parent.length; i++) {
         console.log(parent[i].nodeName)
@@ -12,7 +10,7 @@ function lookForCustomElements(parent: HTMLCollection) {
             lookForCustomElements(parent[i].children)
         }
     }
-}
+} 
 
 let replaceElements: any[] = []
 let addedElements: any[] = []
@@ -49,9 +47,6 @@ async function handleCSRLink(element: Element) {
                         } else {
                             parent.appendChild(element)
                         }
-                        console.log(`Adding ${element.nodeName} to ${parent.nodeName}`)
-        
-                        // console.log(parent.lastChild)
                     }
                 })
                 .catch(error => {
@@ -65,15 +60,8 @@ async function handleCSRLink(element: Element) {
 }
 
 async function changeDifferences(prevElement: HTMLElement | Element, nextElement: HTMLElement | Element) {
-    // if (!prevElement || !nextElement)
-    //     return
-
-    // console.log('Prev: ' + prevElement.nodeName)
-    // console.log('Next: ' + nextElement.nodeName)
 
     if (prevElement.nodeName !== nextElement.nodeName) {
-        console.log('node names dont match')
-        console.log(`Replacing ${prevElement.nodeName} with ${nextElement.nodeName}`)
         replaceElements.push({
             prevElement: prevElement,
             nextElement: nextElement
@@ -82,7 +70,6 @@ async function changeDifferences(prevElement: HTMLElement | Element, nextElement
     }
 
     if (prevElement.children.length === 0 || nextElement.children.length === 0) {
-        console.log('node with no children matched')
         if (prevElement.innerHTML === nextElement.innerHTML)
             return
 
@@ -91,7 +78,6 @@ async function changeDifferences(prevElement: HTMLElement | Element, nextElement
     }
 
     if (prevElement.hasChildNodes() && (prevElement.children.length === nextElement.children.length)) {
-        console.log('node with equal number of children matched')
         for (let i = 0; i < prevElement.children.length; i++) {
             await changeDifferences(prevElement.children[i], nextElement.children[i])
         }
@@ -116,13 +102,11 @@ async function changeDifferences(prevElement: HTMLElement | Element, nextElement
 
         // Add the extra nodes
         const startingIndex = prevElement.children.length
-        for (let i = startingIndex; i < nextElement.children.length; i++) {
-            // prevElement.append(nextElement.children[i])
+        for (let i = startingIndex; i < nextElement.children.length; i++) {)
             addedElements.push({
                 element: nextElement.children[i],
                 parent: nextElement
             })
-            console.log(`Adding ${nextElement.children[i].nodeName} to the end`)
             nextElement.removeChild(nextElement.children[i])
         }
 
