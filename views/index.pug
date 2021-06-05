@@ -11,7 +11,8 @@ html(lang="en")
             h1 Welcome to VanillaType
             h2 
                 | A hybrid website generator that provides the tools to create fast, efficient, and eloquent websites
-            section 
-                p Edit views/index.pug in your project directory and refresh this page to make changes
-            a(href="about/") About
-            script(src="scripts/index.js")
+            a(href="about/" client) About
+            a(href="/") Home
+            section
+                p  Edit views/index.pug in your project directory and refresh this page to make changes
+            script(type="module" src="scripts/lib/vanillatype.js")

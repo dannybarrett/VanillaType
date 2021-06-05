@@ -25,8 +25,17 @@ function minifyFile(srcFile: string, srcFolder: string, destFolder: string) {
         }
 
         if (srcFile.endsWith('.ts')) {
-            const transpiledCode = typescript.transpileModule(fileReader.result, {compilerOptions: {module: typescript.ModuleKind.CommonJS}})
-            data = uglify.minify(transpiledCode.outputText).code
+            const transpiledCode = typescript.transpileModule(fileReader.result, 
+                {
+                    compilerOptions: {
+                        // module: typescript.ModuleKind.CommonJS,
+                        module: typescript.ModuleKind.module,
+                        target: 'ES6'
+                    }
+                }
+            )
+            // data = uglify.minify(transpiledCode.outputText).code
+            data = transpiledCode.outputText
             destFile = srcFile.replace('.ts', '.js')
         }
 
