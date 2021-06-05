@@ -4,6 +4,7 @@
         "module": "CommonJS",
         "noImplicitAny": true,
         "strictNullChecks": true,
-        "noEmitOnError": true
+        "noEmitOnError": true,
+        "lib": ["es2020.string", "DOM"]
     }
 }

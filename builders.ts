@@ -1,3 +1,5 @@
+import { parse } from "dotenv"
+
 const FileAPI = require('file-api')
 const FileAPIFile: any = FileAPI.File
 const FileAPIReader: any = FileAPI.FileReader
@@ -8,6 +10,8 @@ const uglify = require('uglify-js')
 const glob = require('glob')
 const pug = require('pug')
 const fse = require('fse')
+const jsdom = require('jsdom')
+const { JSDOM } = jsdom
 
 function minifyFile(srcFile: string, srcFolder: string, destFolder: string) {
     const fileReader = new FileAPIReader()
@@ -79,16 +83,59 @@ function minifyAllTS(srcFolder: string, destFolder: string) {
 function renderPug(srcFile: string, srcFolder: string, destFolder: string) {
     const compiledSource = pug.renderFile(srcFolder + srcFile)
     const fileName = srcFile.replace('.pug', '')
-    console.log(fileName)
+    // console.log('filename: ' + fileName)
     const additionalDir = fileName === 'index' ? '' : fileName + '/'
     const newFileLocation = destFolder + additionalDir + 'index.html'
     // console.log(compiledSource)
-    fse.writeFile(newFileLocation, compiledSource, (error: any) => {
-        if (!error) 
-                console.log(`${newFileLocation} successfully minified`)
-            else 
-                console.error(`${newFileLocation} could not be written to: ${error}`)
+    const dom = new JSDOM(compiledSource)
+    // const parsedHTML = new DOMParser().parseFromString(compiledSource, 'text/html')
+    let head = dom.window.document.head
+    let body = dom.window.document.body
+    // console.log('addition dir: ' + additionalDir)
+    const reg = /\//g
+    const levels = [...additionalDir.matchAll(reg)].length
+    // console.log(levels)
+    let prelink: string = ''
+    for (let j = 0; j < levels; j++) {
+        prelink += '../'
+    }
+    // console.log(`prelink: ${prelink}`)
+    addPrelinkToAllChildElements(prelink, head)
+    addPrelinkToAllChildElements(prelink, body)
+    fse.writeFile(newFileLocation, head.innerHTML + body.innerHTML, (error: any) => {
+        if (!error)
+            console.log(`${newFileLocation} successfully minified`)
+        else 
+            console.error(`${newFileLocation} could not be written to: ${error}`)
     })
+}
+
+function addPrelinkToAllChildElements(prelink: string, element: HTMLElement | Element) {
+    const href = element.getAttribute('href') || ''
+    const src = element.getAttribute('src') || ''
+
+    if (element.hasAttribute('href')) {
+        // console.log('test')
+        if (!href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('www.')) {
+            let newlink = prelink + href
+            element.setAttribute('href', newlink)
+        }
+    }
+
+    if (element.hasAttribute('src')) {
+        if (!src.startsWith('http://') && !src.startsWith('https://') && !src.startsWith('www.')) {
+            let newlink = prelink + src
+            element.setAttribute('src', newlink)
+        }
+    }
+
+    // console.log(element)
+
+    if (element.children.length > 0) {
+        for (let j = 0; j < element.children.length; j++) {
+            addPrelinkToAllChildElements(prelink, element.children[j])
+        }
+    }
 }
 
 function renderAllPugFiles(srcFolder: string, destFolder: string) {
